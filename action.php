@@ -54,8 +54,15 @@ class action_plugin_pageinfo extends DokuWiki_Action_Plugin{
 	}
 
 	function _html_changes() {
+		global $lang;
+		
 		$recents = $this->_getChanges();
 		print p_cached_output($this->localfn('recent'));
+		
+		if(empty($recents)) {
+			print '<div class="level1"><p>' . $lang['nothingfound'] . '</p></div>';
+			return false;
+		}
 		
 		$form = new Doku_Form(array('id' => 'dw__recent', 'method' => 'GET'));
 		$form->addElement(form_makeOpenTag('ul'));
@@ -141,7 +148,6 @@ class action_plugin_pageinfo extends DokuWiki_Action_Plugin{
 
 	function _html_links($type){
 		global $ID;
-		global $conf;
 		global $lang;
 
 		switch($type){
@@ -194,7 +200,6 @@ class action_plugin_pageinfo extends DokuWiki_Action_Plugin{
 		$words = $this->_getIndex($metaname, '_w');
 		$page_idx = $this->_getIndex('page', '');
 
-		if (($i = array_search($val, $words)) !== false) $w_idx = $i;
 		if (($i = array_search($val, $page_idx)) !== false) $idx = $i;
 
 		$lines = $this->_getIndex($metaname, '_p');
