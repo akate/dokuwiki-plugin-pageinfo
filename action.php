@@ -175,24 +175,27 @@ class action_plugin_pageinfo extends DokuWiki_Action_Plugin{
 	}
 
 	function _getLinks($id){
+		global $ID;
+		
 		$result = array();
-
-		$result = $this->_lookupExtetnalLinks('relation_references', $id);
-
-		/*if(!count($result)) return $result;
+		$metadata = p_get_metadata($ID);
+		if (empty($metadata['relation']['references'])) return $result;
+		
+		$result = array_keys($metadata['relation']['references']);
+		//$result = $this->_lookupExternalLinks('relation_references', $id);
 
 		// check ACL permissions
 		foreach(array_keys($result) as $idx){
-		if(auth_quickaclcheck($result[$idx]) < AUTH_READ){
-		unset($result[$idx]);
+			if(auth_quickaclcheck($result[$idx]) < AUTH_READ){
+				unset($result[$idx]);
+			}
 		}
-		}*/
 
 		sort($result);
 		return $result;
 	}
 
-	function _lookupExtetnalLinks($key, $value) {
+	function _lookupExternalLinks($key, $value) {
 		$val = $value;
 		$metaname = idx_cleanName($key);
 		$result = array();
