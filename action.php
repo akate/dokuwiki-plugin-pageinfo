@@ -55,7 +55,9 @@ class action_plugin_pageinfo extends DokuWiki_Action_Plugin{
 
 	function _html_changes() {
 		global $lang;
-		
+		global $ID;
+		global $INFO;
+
 		$recents = $this->_getChanges();
 		print p_cached_output($this->localfn('recent'));
 		
@@ -80,15 +82,24 @@ class action_plugin_pageinfo extends DokuWiki_Action_Plugin{
 			$form->addElement($date);
 			$form->addElement(form_makeCloseTag('span'));
 
-			$form->addElement(form_makeOpenTag('a', array('class' => 'diff_link', 'href' => wl($recent['id'],"do=diff", false, '&'))));
-			$form->addElement(form_makeTag('img', array(
-			'src'   => DOKU_BASE.'lib/images/diff.png',
-			'width' => 15,
-			'height'=> 11,
-			'title' => $lang['diff'],
-			'alt'   => $lang['diff']
-			)));
-			$form->addElement(form_makeCloseTag('a'));
+			$rdate = $recent['date'];
+			if ($INFO['lastmod'] == $rdate) {
+				$form->addElement(form_makeTag('img', array(
+				'src' =>  DOKU_BASE.'lib/images/blank.gif',
+				'width' => '15',
+				'height' => '11',
+				'alt'    => '')));
+			} else {
+				$form->addElement(form_makeOpenTag('a', array('href' => wl($ID,"rev=$rdate,do=diff", false, '&'), 'class' => 'diff_link')));
+				$form->addElement(form_makeTag('img', array(
+				'src'   => DOKU_BASE.'lib/images/diff.png',
+				'width' => 15,
+				'height'=> 11,
+				'title' => $lang['diff'],
+				'alt'   => $lang['diff']
+				)));
+				$form->addElement(form_makeCloseTag('a'));
+			}
 
 			$form->addElement(form_makeOpenTag('span', array('class' => 'sum')));
 			$form->addElement(' &ndash; '.htmlspecialchars($recent['sum']));
